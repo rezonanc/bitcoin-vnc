@@ -3,25 +3,27 @@ MAINTAINER Edvinas Aleksejonokas <http://github.com/rezonanc>
 
 # Install LXDE and VNC server
 RUN apt-get update \
- && DEBIAN_FRONTEND=noninteractive apt-get install -y lxde-core lxterminal tightvncserver curl gnupg
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y lxde-core lxterminal tightvncserver curl gnupg dos2unix
 
-# Download bitcoin
-RUN mkdir /bitcoin
-WORKDIR /bitcoin
-ENV BITCOIN_VERSION 0.14.2
-RUN curl -SLO "https://bitcoin.org/bin/bitcoin-core-$BITCOIN_VERSION/bitcoin-$BITCOIN_VERSION-x86_64-linux-gnu.tar.gz" \
- && curl -SLO "https://bitcoin.org/bin/bitcoin-core-$BITCOIN_VERSION/SHA256SUMS.asc"
+# Download litecoin
+RUN mkdir /litecoin
+WORKDIR /litecoin
+ENV LITECOIN_VERSION 0.13.2
+RUN curl -SLO "https://download.litecoin.org/litecoin-$LITECOIN_VERSION/linux/litecoin-$LITECOIN_VERSION-x86_64-linux-gnu.tar.gz" \
+ && curl -SLO "https://download.litecoin.org/litecoin-$LITECOIN_VERSION/linux/litecoin-$LITECOIN_VERSION-linux-signatures.asc" \
+ && mv litecoin-$LITECOIN_VERSION-linux-signatures.asc SHA256SUMS.asc \
+ && dos2unix SHA256SUMS.asc
 
 # Verify and install download
-ENV BITCOIN_KEY_FINGERPRINT 90C8019E36C2E964
-RUN gpg --keyserver pgp.mit.edu --recv-keys $BITCOIN_KEY_FINGERPRINT \
+ENV LITECOIN_KEY_FINGERPRINT fe3348877809386c
+RUN gpg --keyserver pgp.mit.edu --recv-keys $LITECOIN_KEY_FINGERPRINT \
  && gpg --verify --trust-model=always SHA256SUMS.asc \
  && gpg --decrypt --output SHA256SUMS SHA256SUMS.asc \
- && grep "bitcoin-$BITCOIN_VERSION-x86_64-linux-gnu.tar.gz" SHA256SUMS | sha256sum -c - \
- && tar -xzf "bitcoin-$BITCOIN_VERSION-x86_64-linux-gnu.tar.gz" -C /usr --strip-components=1 \
- && rm "bitcoin-$BITCOIN_VERSION-x86_64-linux-gnu.tar.gz" SHA256SUMS.asc SHA256SUMS
+ && grep "x86_64" SHA256SUMS | sha256sum -c - \
+ && tar -xzf "litecoin-$LITECOIN_VERSION-x86_64-linux-gnu.tar.gz" -C /usr --strip-components=1 \
+ && rm "litecoin-$LITECOIN_VERSION-x86_64-linux-gnu.tar.gz" "SHA256SUMS.asc" SHA256SUMS
 
-RUN ln -s /bitcoin /root/.bitcoin
+RUN ln -s /litecoin /root/.litecoin
 
 # Set user for VNC server (USER is only for build)
 ENV USER root
@@ -31,7 +33,7 @@ EXPOSE 5901
 
 # Copy VNC script that handles restarts
 COPY run.sh /opt/
-COPY bitcoin.desktop /opt/
+COPY litecoin.desktop /opt/
 RUN mkdir -p /root/.config/autostart \
-  && cp /opt/bitcoin.desktop /root/.config/autostart
+  && cp /opt/litecoin.desktop /root/.config/autostart
 CMD ["/opt/run.sh"]
