@@ -36,4 +36,6 @@ EXPOSE 5901
 # Copy VNC script that handles restarts
 COPY run.sh /opt/
 COPY bitcoin.desktop /opt/
+RUN mkdir -p /root/.config/autostart \
+  && cp /opt/bitcoin.desktop /root/.config/autostart
 CMD ["/opt/run.sh"]
