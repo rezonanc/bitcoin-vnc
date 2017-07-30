@@ -1,3 +1,3 @@
 [Desktop Entry]
 Type=Application
-Exec=bitcoin-qt -datadir=/bitcoin
+Exec=bitcoin-qt -datadir=/home/bitcoin/data
