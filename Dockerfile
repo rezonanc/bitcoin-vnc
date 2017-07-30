@@ -2,9 +2,6 @@ FROM ubuntu:14.04
 MAINTAINER Edvinas Aleksejonokas <http://github.com/rezonanc>
 
 EXPOSE 5901
-ENV USER bitcoin
-RUN mkdir /home/bitcoin
-WORKDIR /home/bitcoin
 
 # Install LXDE and VNC server
 RUN apt-get update \
@@ -29,6 +26,8 @@ COPY run.sh /opt/
 COPY bitcoin.desktop /opt/
 
 ARG PUID=1000
-RUN chown -R $PUID /home/bitcoin
+RUN useradd -u $PUID -m -s /bin/false bitcoin
+USER bitcoin
+WORKDIR /home/bitcoin
 
 CMD ["/opt/run.sh"]
