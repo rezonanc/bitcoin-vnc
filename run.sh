@@ -1,8 +1,8 @@
 #!/bin/bash
 
 export USER=bitcoin
+export HOME=/home/$USER
 
-mkdir -p $HOME/data
 mkdir -p $HOME/.config/autostart
 cp /opt/bitcoin.desktop /$HOME/.config/autostart
 

@@ -1,8 +1,6 @@
 FROM ubuntu:14.04
 MAINTAINER Edvinas Aleksejonokas <http://github.com/rezonanc>
 
-EXPOSE 5901
-
 # Install LXDE and VNC server
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install -y lxde-core lxterminal tightvncserver curl gnupg
@@ -25,9 +23,10 @@ RUN gpg --keyserver pgp.mit.edu --recv-keys $BITCOIN_KEY_FINGERPRINT \
 COPY run.sh /opt/
 COPY bitcoin.desktop /opt/
 
-ARG PUID=1000
-RUN useradd -u $PUID -m -s /bin/false bitcoin
-USER bitcoin
+# Prepare environment
+RUN mkdir -p /home/bitcoin && chmod uog=rwx /home/bitcoin
 WORKDIR /home/bitcoin
+
+EXPOSE 5901
 
 CMD ["/opt/run.sh"]
