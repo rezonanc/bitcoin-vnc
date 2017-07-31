@@ -1,10 +1,10 @@
 #!/bin/bash
 
-export USER=bitcoin
+export USER=litecoin
 export HOME=/home/$USER
 
 mkdir -p $HOME/.config/autostart
-cp /opt/bitcoin.desktop /$HOME/.config/autostart
+cp /opt/litecoin.desktop /$HOME/.config/autostart
 
 # Remove VNC lock (if process already killed)
 rm /tmp/.X1-lock /tmp/.X11-unix/X1
